@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head.ejs', {
+      title: 'High Georgia Welding',
+      description: 'High Georgia Welding was founded with a passion for precision and a commitment to excellence. Over the years, we have grown into a trusted name in the welding industry, known for our quality workmanship and customer-centric approach.',
+      cssPath: './styles.css'
+  }) %>
+  <!--prettier-ignore-->
+  <%- include('partials/header.ejs') %>
+  <body data-page="gallery">
+    <main class="glassmorphism gallery">
+      <h2 data-gallery-title>Image Gallery</h2>
+      <div data-filter-container class="gallery__filters">
+        <button class="filter-button active" data-filter="all">All</button>
+        <button class="filter-button" data-filter="pipes">Pipes</button>
+        <button class="filter-button" data-filter="structural">
+          Structural
+        </button>
+      </div>
+
+      <div data-gallery-container class="gallery__grid">
+        <% if (images && images.length > 0) { %> <% images.forEach((image,
+        index) => { %>
+        <div
+          class="gallery__item"
+          data-gallery-item
+          data-category="<%= image.category %>"
+          data-index="<%= index %>"
+        >
+          <img
+            src="<%= image.path %>"
+            alt="<%= image.description %>"
+            class="gallery__image"
+            data-gallery-image
+            data-description="<%= image.description %>"
+            loading="lazy"
+          />
+        </div>
+        <% }); %> <% } else { %>
+        <p data-gallery-empty>No images found</p>
+        <% } %>
+      </div>
+    </main>
+
+    <div class="gallery__lightbox" data-lightbox aria-hidden="true">
+      <button
+        class="gallery__close"
+        data-lightbox-close
+        aria-label="Close lightbox"
+      >
+        &times;
+      </button>
+      <button
+        class="gallery__nav gallery__nav--prev"
+        data-lightbox-prev
+        aria-label="Previous image"
+      >
+        &lt;
+      </button>
+      <button
+        class="gallery__nav gallery__nav--next"
+        data-lightbox-next
+        aria-label="Next image"
+      >
+        &gt;
+      </button>
+      <div class="gallery__content">
+        <img
+          data-lightbox-image
+          src=""
+          alt=""
+          class="gallery__lightbox-image"
+        />
+        <p class="gallery__description" data-lightbox-description></p>
+      </div>
+      <div class="gallery__counter" data-lightbox-counter></div>
+    </div>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>

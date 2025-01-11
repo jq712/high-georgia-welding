@@ -1,0 +1,129 @@
+<html lang="en">
+  <head>
+    <%- include('partials/head', { title: 'Gallery Management', description:
+    'Manage the image gallery.', cssPath: '/styles.css' }) %>
+  </head>
+  <%- include('partials/dashboard-nav', { currentPage: 'gallery-management' })
+  %>
+  <body data-page="gallery-management">
+    <section id="gallery-section" class="dashboard__section">
+      <div class="gallery-management">
+        <div class="gallery-management__header">
+          <h2 id="gallery" class="dashboard__section-title">
+            Image Gallery Management
+          </h2>
+          <form
+            id="gallery-upload-form"
+            action="/api/gallery/images"
+            method="POST"
+            enctype="multipart/form-data"
+            class="gallery-management__form"
+          >
+            <div class="file-input-wrapper">
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                required
+                id="gallery-file-input"
+              />
+              <label for="gallery-file-input" class="file-input-label">
+                <span class="file-input-text">Choose an image...</span>
+              </label>
+            </div>
+            <select name="category" required>
+              <option value="pipes">Pipes</option>
+              <option value="structural">Structural</option>
+            </select>
+            <textarea
+              name="description"
+              placeholder="Image description"
+              required
+            ></textarea>
+            <button type="submit" class="btn">Add Image</button>
+          </form>
+        </div>
+
+        <div id="gallery-container" class="gallery-management__grid">
+          <% if (images && images.length > 0) { %> <% images.forEach(image => {
+          %>
+          <article class="gallery-card" data-image-id="<%= image._id %>">
+            <div class="gallery-card__image-container">
+              <img
+                src="<%= image.path %>"
+                alt="<%= image.description %>"
+                class="gallery-card__image"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="gallery-card__content">
+              <div class="gallery-card__field">
+                <span class="gallery-card__label">Category</span>
+                <span class="gallery-card__value"><%= image.category %></span>
+              </div>
+
+              <div class="gallery-card__field">
+                <span class="gallery-card__label">Description</span>
+                <span class="gallery-card__value"
+                  ><%= image.description %></span
+                >
+              </div>
+
+              <div class="gallery-card__field">
+                <span class="gallery-card__label">Uploaded</span>
+                <span class="gallery-card__value"><%= image.uploadedAt %></span>
+              </div>
+            </div>
+
+            <div class="gallery-card__actions">
+              <button class="btn btn--edit" data-action="edit">Edit</button>
+              <button class="btn btn--danger" data-action="delete">
+                Delete
+              </button>
+            </div>
+          </article>
+          <% }); %> <% } else { %>
+          <p class="gallery-management__empty">No images found</p>
+          <% } %>
+        </div>
+      </div>
+    </section>
+    <script src="/dashboard.js"></script>
+    <div id="editModal" class="modal">
+      <div class="modal__content">
+        <h3 class="modal__title">Edit Image</h3>
+        <form id="editImageForm" class="modal__form">
+          <div class="modal__field">
+            <label for="editCategory">Category</label>
+            <select id="editCategory" name="category" required>
+              <option value="pipes">Pipes</option>
+              <option value="structural">Structural</option>
+            </select>
+          </div>
+          <div class="modal__field">
+            <label for="editDescription">Description</label>
+            <textarea
+              id="editDescription"
+              name="description"
+              required
+            ></textarea>
+          </div>
+          <div class="modal__actions">
+            <button
+              type="button"
+              class="btn btn--secondary"
+              data-action="close-modal"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+  </body>
+</html>

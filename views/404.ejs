@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>404 - Page Not Found</title>
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+    />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/styles.css"
+    />
+  </head>
+  <body data-page="404">
+    <div class="error-page">
+      <div class="error-content">
+        <h1 class="error-title">404</h1>
+        <p class="error-message">
+          Sorry, the page you're looking for cannot be found.
+        </p>
+        <p class="error-submessage">It may have been moved or deleted.</p>
+        <a
+          href="/"
+          class="btn btn--large"
+          >Return to Homepage</a
+        >
+      </div>
+    </div>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+  </body>
+</html>

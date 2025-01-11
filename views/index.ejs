@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head.ejs', {
+      title: 'High Georgia Welding',
+      description: 'High Georgia Welding was founded with a passion for precision and a commitment to excellence. Over the years, we have grown into a trusted name in the welding industry, known for our quality workmanship and customer-centric approach.',
+      cssPath: './styles.css'
+  }) %>
+  <!--prettier-ignore-->`
+  <%- include('partials/header.ejs') %>
+  <body data-page="index">
+    <main>
+      <section class="hero">
+        <div class="hero__content">
+          <div class="hero__spark-container">
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+          </div>
+          <h1 class="hero__headline">
+            We handle all types of welding & pipe fitting across North Georgia
+            and surrounding areas.
+          </h1>
+          <div class="hero__cta-container">
+            <p class="hero__description">
+              Over 15 years of experience bringing the weld to you.
+            </p>
+            <div class="hero__cta-btn-container">
+              <a
+                href="#contact"
+                class="btn btn--animated"
+                >Get a Quote!</a
+              >
+              <a
+                href="/about"
+                class="btn"
+                >Learn More</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="hero__image-container">
+          <img
+            src="/assets/pipe-welding.jpg"
+            alt="Welding Image"
+            class="hero__image"
+          />
+          <div class="hero__spark-container--desktop">
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+            <div class="hero__spark"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cards-section">
+        <h2 class="cards-title">Our Services</h2>
+        <div class="cards">
+          <div class="card">
+            <div class="card__image-container">
+              <img
+                src="./assets/pipe-repair.jpg"
+                alt="Welding repair on a large pipe"
+                class="card__image"
+              />
+            </div>
+            <div class="card__content">
+              <h3 class="card__title">Repairs</h3>
+              <p class="card__text">
+                High Georgia Welding Services stands as your go-to expert for
+                welding repairs, catering to both industrial giants and personal
+                projects with precision and care. Our skilled team ensures that
+                your equipment and structures are restored to peak condition,
+                minimizing downtime and maximizing efficiency.
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__image-container">
+              <img
+                src="./assets/stainless-pipefitting.jpg"
+                alt="Stainless steel pipe fitting with technical welds"
+                class="card__image"
+              />
+            </div>
+            <div class="card__content">
+              <h3 class="card__title">Pipe Fitting</h3>
+              <p class="card__text">
+                High Georgia Welding Services is a trusted name in the industry
+                for pipe fitting services. We have the expertise to handle all
+                types of pipe fitting projects, from intricate industrial
+                systems to residential plumbing. Our precision ensures
+                leak-free, efficient, and durable installations.
+              </p>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__image-container">
+              <img
+                src="./assets/stainless-steel-weld.jpg"
+                alt="Close-up of a stainless steel weld"
+                class="card__image"
+              />
+            </div>
+            <div class="card__content">
+              <h3 class="card__title">All Alloys Covered</h3>
+              <p class="card__text">
+                At High Georgia Welding Services, we pride ourselves on our
+                versatility. Our skilled welders are proficient in working with
+                a wide range of alloys, including stainless steel, aluminum,
+                titanium, and more. Whatever your material needs, we have the
+                expertise to deliver high-quality welds that stand the test of
+                time.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!--prettier-ignore-->
+      <%- include('partials/contact-form.ejs', { isHomePage: true }) %>
+    </main>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>

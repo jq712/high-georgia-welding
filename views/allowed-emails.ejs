@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- prettier-ignore -->
+    <%- include('partials/head', { title: 'Allowed Emails', description: 'Manage allowed emails for the application.', cssPath: '/styles.css' }) %>
+  </head>
+  <!-- prettier-ignore -->
+  <%- include('partials/dashboard-nav', { currentPage: 'allowed-emails' }) %>
+  <body data-page="allowed-emails">
+    <section class="dashboard__section">
+      <h2 class="dashboard__section-title">Manage Allowed Emails</h2>
+
+      <!-- Add this new form section -->
+      <div class="add-email-form">
+        <form
+          id="addEmailForm"
+          class="dashboard__form"
+        >
+          <input
+            type="email"
+            id="newEmail"
+            placeholder="Enter email address"
+            required
+          />
+          <select
+            id="newRole"
+            required
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button
+            type="submit"
+            class="btn btn--edit"
+          >
+            Add Email
+          </button>
+        </form>
+      </div>
+
+      <table
+        id="allowedEmailsTable"
+        class="dashboard__table"
+      >
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Added At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (allowedEmails && allowedEmails.length > 0) { %> <%
+          allowedEmails.forEach(email => { %>
+          <tr>
+            <td data-label="Email"><%= email.email %></td>
+            <td data-label="Role"><%= email.role %></td>
+            <td data-label="Added At">
+              <%= email.addedAt ? new
+              Date(email.addedAt).toLocaleString('en-US', { year: 'numeric',
+              month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+              }) : 'Date not available' %>
+            </td>
+            <td data-label="Actions">
+              <button
+                class="btn btn--edit"
+                data-id="<%= email._id %>"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn--delete"
+                data-id="<%= email._id %>"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }) %> <% } else { %>
+          <tr>
+            <td
+              colspan="4"
+              class="text-center"
+            >
+              No allowed emails found
+            </td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </section>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

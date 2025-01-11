@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head', { title: 'Dashboard', description: 'Manage messages and image gallery.', cssPath: '/styles.css' }) %>
+  <!-- prettier-ignore -->
+  <%- include('partials/dashboard-nav', { currentPage: 'dashboard' }) %>
+  <body data-page="messages" class="dashboard">
+    <div class="dashboard-container">
+      <main class="dashboard__content" role="main">
+        <section id="messages-section" class="dashboard__section">
+          <h2 id="messages" class="dashboard__section-title">Messages</h2>
+          <div class="dashboard__table-container">
+            <table id="messagesTable" class="dashboard__table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Message</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Messages will be dynamically inserted here -->
+              </tbody>
+            </table>
+          </div>
+          <% if (user && user.role === 'admin') { %>
+          <button id="deleteAllMessages" class="btn btn--danger">
+            Delete All Messages
+          </button>
+          <!-- prettier-ignore -->
+          <% } %>
+          <% if (messages && messages.success) { %>
+          <div class="alert alert-success"><%= messages.success %></div>
+          <% } %>
+        </section>
+      </main>
+    </div>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

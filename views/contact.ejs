@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head.ejs', { 
+      title: 'High Georgia Welding', 
+      description: 'High Georgia Welding was founded with a passion for precision and a commitment to excellence. Over the years, we have grown into a trusted name in the welding industry, known for our quality workmanship and customer-centric approach.', 
+      cssPath: './styles.css' 
+  }) %>
+  <!--prettier-ignore-->
+  <%- include('partials/header.ejs') %>
+  <body data-page="contact">
+    <main>
+      <!--prettier-ignore-->
+      <%- include('partials/contact-form.ejs', { isHomePage: false }) %>
+    </main>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>

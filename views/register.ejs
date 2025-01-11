@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head.ejs', { 
+      title: 'Register for High Georgia Welding Dashboard | Create Account', 
+      description: 'Create an account to access the High Georgia Welding dashboard. Manage your welding projects and access exclusive resources for authorized clients.', 
+      cssPath: './styles.css' 
+  }) %>
+  <body data-page="register" class="register">
+    <!--prettier-ignore-->
+    <%- include('partials/header.ejs') %>
+
+    <main class="register__container">
+      <h1 class="register__header">
+        CREATE an Account to Gain Access to the HighGeorgiaWelding.com Dashboard
+      </h1>
+
+      <!--prettier-ignore-->
+      <% if (locals.messages) { %>
+        <% if (messages.error) { %>
+      <div class="alert alert--error"><%= messages.error %></div>
+      <% } %>
+      <!--prettier-ignore-->
+      <% if (messages.success) { %>
+      <div class="alert alert--success"><%= messages.success %></div>
+      <% } %> <% } %>
+
+      <form
+        method="POST"
+        action="/api/auth/register"
+        data-form="register"
+        class="register__form"
+        novalidate
+      >
+        <div class="register__group">
+          <label for="email" class="form__label">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            data-register-email
+            data-input="email"
+            class="form__input"
+            required
+            autocomplete="email"
+          />
+          <span class="error-message" data-error="email"></span>
+        </div>
+        <div class="register__group">
+          <label for="password" class="form__label">Password</label>
+          <div class="password-container">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              data-register-password
+              data-input="password"
+              class="form__input"
+              required
+              minlength="8"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              data-password-toggle
+              aria-label="Toggle password visibility"
+            >
+              👀
+            </button>
+          </div>
+          <span class="error-message" data-error="password"></span>
+        </div>
+        <div class="register__group">
+          <label for="confirm-password" class="form__label"
+            >Confirm Password</label
+          >
+          <input
+            type="password"
+            id="confirm-password"
+            name="confirm-password"
+            data-register-confirm-password
+            data-input="confirm-password"
+            class="form__input"
+            required
+            minlength="8"
+            autocomplete="new-password"
+          />
+          <span class="error-message" data-error="confirm-password"></span>
+        </div>
+        <div class="error-message" data-error="general"></div>
+        <button
+          type="submit"
+          class="btn register__submit"
+          data-action="submit-register"
+        >
+          Create Account
+        </button>
+      </form>
+      <div class="register__login-link">
+        Already have an account?
+        <a href="/login" class="register__login-anchor">Log in</a>
+      </div>
+    </main>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--prettier-ignore-->
+  <%- include('partials/head.ejs', { 
+      title: 'Login | High Georgia Welding - Access Your Welding Dashboard', 
+      description: "Securely log in to High Georgia Welding's dashboard. Manage your welding projects, view reports, and access exclusive resources for our valued clients.", 
+      cssPath: './styles.css' 
+  }) %>
+  <body class="login" data-page="login">
+    <!--prettier-ignore-->
+    <%- include('partials/header.ejs') %>
+
+    <main class="login__container">
+      <h3 class="login__header">
+        LOGIN to Access High Georgia Welding Dashboard
+      </h3>
+
+      <!--prettier-ignore-->
+      <% if (locals.messages) { %>
+        <% if (messages.error) { %>
+      <div class="alert alert--error"><%= messages.error %></div>
+      <% } %>
+      <!--prettier-ignore-->
+      <% if (messages.success) { %>
+      <div class="alert alert--success"><%= messages.success %></div>
+      <% } %> <% } %>
+
+      <form class="login__form" data-form="login" novalidate>
+        <div class="form__group">
+          <label for="email" class="form__label">Email:</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            data-login-email
+            data-input="email"
+            class="form__input login__input"
+            required
+            autocomplete="email"
+          />
+          <span class="error-message" data-error="email"></span>
+        </div>
+        <div class="form__group">
+          <label for="password" class="form__label">Password:</label>
+          <div class="login__password-wrapper">
+            <input
+              type="password"
+              name="password"
+              id="password"
+              data-login-password
+              data-input="password"
+              class="form__input login__input"
+              required
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="login__password-toggle"
+              data-password-toggle
+              aria-label="Toggle password visibility"
+            >
+              👀
+            </button>
+          </div>
+          <span class="error-message" data-error="password"></span>
+        </div>
+        <div class="error-message" data-error="general"></div>
+        <button type="submit" class="btn" data-action="submit-login">
+          Log In
+        </button>
+        <div class="login__divider">
+          <span>OR</span>
+        </div>
+      </form>
+      <a href="/register" class="btn"> Create an account </a>
+      <p class="login__message">
+        Account creation and login are available exclusively for pre-authorized
+        email addresses. To request access, please consult with the
+        administrator.
+      </p>
+    </main>
+
+    <!--prettier-ignore-->
+    <%- include('partials/footer.ejs') %>
+
+    <script src="scripts.js"></script>
+  </body>
+</html>

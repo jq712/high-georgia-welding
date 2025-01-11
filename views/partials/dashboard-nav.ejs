@@ -1,0 +1,88 @@
+<header class="header glassmorphism">
+  <span class="header__description">DASHBOARD</span>
+  <nav class="nav">
+    <ul class="nav__list">
+      <li>
+        <a
+          href="/"
+          class="nav__link <%= currentPage === 'home' ? 'active' : '' %>"
+          >Home Page</a
+        >
+      </li>
+      <li>
+        <a
+          href="/dashboard"
+          class="nav__link <%= currentPage === 'dashboard' ? 'active' : '' %>"
+          >Messages</a
+        >
+      </li>
+      <li>
+        <a
+          href="/allowed-emails"
+          class="nav__link <%= currentPage === 'allowed-emails' ? 'active' : '' %>"
+          >Allowed Emails</a
+        >
+      </li>
+      <li>
+        <a
+          href="/gallery-management"
+          class="nav__link <%= currentPage === 'gallery-management' ? 'active' : '' %>"
+          >Gallery Management</a
+        >
+      </li>
+      <li>
+        <button
+          class="btn btn--thin btn--logout"
+          data-action="logout"
+        >
+          Logout
+        </button>
+      </li>
+    </ul>
+    <button class="nav__hamburger nav__hamburger--spin">
+      <span class="nav__hamburger-box">
+        <span class="nav__hamburger-inner"></span>
+      </span>
+    </button>
+    <div class="nav__dropdown glassmorphism">
+      <ul class="nav__dropdown-list">
+        <li>
+          <a
+            href="/"
+            class="nav__dropdown-link <%= currentPage === 'home' ? 'active' : '' %>"
+            >Home Page</a
+          >
+        </li>
+        <li>
+          <a
+            href="/dashboard"
+            class="nav__dropdown-link <%= currentPage === 'dashboard' ? 'active' : '' %>"
+            >Messages</a
+          >
+        </li>
+        <li>
+          <a
+            href="/allowed-emails"
+            class="nav__dropdown-link <%= currentPage === 'allowed-emails' ? 'active' : '' %>"
+            >Allowed Emails</a
+          >
+        </li>
+        <li>
+          <a
+            href="/gallery-management"
+            class="nav__dropdown-link <%= currentPage === 'gallery-management' ? 'active' : '' %>"
+            >Gallery Management</a
+          >
+        </li>
+        <li>
+          <button
+            class="nav__dropdown-link btn btn--logout"
+            data-action="logout"
+          >
+            Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
