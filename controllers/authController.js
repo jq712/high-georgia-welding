@@ -7,9 +7,6 @@ const register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    // make email lowercase
-    req.body.email = email.toLowerCase();
-
     const isAllowed = await AllowedEmail.findOne({ email });
     if (!isAllowed) {
       return res.status(403).json({
