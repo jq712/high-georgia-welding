@@ -315,36 +315,43 @@ class AuthManager {
     });
   }
 
-  async handleLogin(e) {
-    const formData = new FormData(e.target);
-    const data = {
-      email: formData.get("email"),
-      password: formData.get("password"),
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      throw new AppError('Email and password are required', 400);
+    }
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new AppError('Invalid email or password', 401);
+    }
+
+    // Compare provided password with hashed password
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      throw new AppError('Invalid email or password', 401);
+    }
+
+    // Store user data in the session
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      isAdmin: user.isAdmin,
     };
 
-    try {
-      const response = await fetch(API_ENDPOINTS.FORMS.LOGIN, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.status === "success") {
-        showCustomAlert("Login successful!");
-        window.location.href = result.redirect || ROUTES.DASHBOARD;
-      } else {
-        this.showErrors(result.errors);
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      this.showErrors({ general: "An error occurred during login" });
-    }
+    // Redirect to dashboard on success
+    res.redirect('/dashboard');
+  } catch (error) {
+    // Redirect back to login page with error message
+    req.session.messages = { error: error.message };
+    res.redirect('/login');
   }
+};
 
   toggleLoginPasswordVisibility() {
     const passwordType =
