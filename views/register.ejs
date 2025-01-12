@@ -6,11 +6,11 @@
       description: 'Create an account to access the High Georgia Welding dashboard. Manage your welding projects and access exclusive resources for authorized clients.', 
       cssPath: './styles.css' 
   }) %>
-  <body data-page="register" class="register">
+  <body data-page="register">
     <!--prettier-ignore-->
     <%- include('partials/header.ejs') %>
 
-    <main class="register__container">
+    <main class="flex-center">
       <h1 class="register__header">
         CREATE an Account to Gain Access to the HighGeorgiaWelding.com Dashboard
       </h1>
@@ -33,7 +33,11 @@
         novalidate
       >
         <div class="register__group">
-          <label for="email" class="form__label">Email</label>
+          <label
+            for="email"
+            class="form__label"
+            >Email</label
+          >
           <input
             type="email"
             id="email"
@@ -44,10 +48,17 @@
             required
             autocomplete="email"
           />
-          <span class="error-message" data-error="email"></span>
+          <span
+            class="error-message"
+            data-error="email"
+          ></span>
         </div>
         <div class="register__group">
-          <label for="password" class="form__label">Password</label>
+          <label
+            for="password"
+            class="form__label"
+            >Password</label
+          >
           <div class="password-container">
             <input
               type="password"
@@ -60,19 +71,16 @@
               minlength="8"
               autocomplete="new-password"
             />
-            <button
-              type="button"
-              class="password-toggle"
-              data-password-toggle
-              aria-label="Toggle password visibility"
-            >
-              👀
-            </button>
           </div>
-          <span class="error-message" data-error="password"></span>
+          <span
+            class="error-message"
+            data-error="password"
+          ></span>
         </div>
         <div class="register__group">
-          <label for="confirm-password" class="form__label"
+          <label
+            for="confirm-password"
+            class="form__label"
             >Confirm Password</label
           >
           <input
@@ -86,9 +94,15 @@
             minlength="8"
             autocomplete="new-password"
           />
-          <span class="error-message" data-error="confirm-password"></span>
+          <span
+            class="error-message"
+            data-error="confirm-password"
+          ></span>
         </div>
-        <div class="error-message" data-error="general"></div>
+        <div
+          class="error-message"
+          data-error="general"
+        ></div>
         <button
           type="submit"
           class="btn register__submit"
@@ -97,9 +111,9 @@
           Create Account
         </button>
       </form>
-      <div class="register__login-link">
-        Already have an account?
-        <a href="/login" class="register__login-anchor">Log in</a>
+      <div class="register__login-links">
+        <span> Already have an account? </span>
+        <a href="/login"><button class="btn">Log In</button></a>
       </div>
     </main>
 

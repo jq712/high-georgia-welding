@@ -6,32 +6,42 @@
   <%- include('partials/dashboard-nav', { currentPage: 'gallery-management' })
   %>
   <body data-page="gallery-management">
-    <section id="gallery-section" class="dashboard__section">
+    <section
+      id="gallery-section"
+      class="dashboard__section"
+    >
       <div class="gallery-management">
         <div class="gallery-management__header">
-          <h2 id="gallery" class="dashboard__section-title">
+          <h2
+            id="gallery"
+            class="dashboard__section-title"
+          >
             Image Gallery Management
           </h2>
           <form
             id="gallery-upload-form"
-            action="/api/gallery/images"
+            action="/api/gallery"
             method="POST"
             enctype="multipart/form-data"
             class="gallery-management__form"
           >
-            <div class="file-input-wrapper">
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                required
-                id="gallery-file-input"
-              />
-              <label for="gallery-file-input" class="file-input-label">
-                <span class="file-input-text">Choose an image...</span>
-              </label>
-            </div>
-            <select name="category" required>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              required
+              id="gallery-file-input"
+            />
+            <label
+              for="gallery-file-input"
+              class="btn"
+            >
+              <span class="file-input-text">Choose an image...</span>
+            </label>
+            <select
+              name="category"
+              required
+            >
               <option value="pipes">Pipes</option>
               <option value="structural">Structural</option>
             </select>
@@ -40,14 +50,25 @@
               placeholder="Image description"
               required
             ></textarea>
-            <button type="submit" class="btn">Add Image</button>
+            <button
+              type="submit"
+              class="btn"
+            >
+              Add Image
+            </button>
           </form>
         </div>
 
-        <div id="gallery-container" class="gallery-management__grid">
+        <div
+          id="gallery-container"
+          class="gallery-management__grid"
+        >
           <% if (images && images.length > 0) { %> <% images.forEach(image => {
           %>
-          <article class="gallery-card" data-image-id="<%= image._id %>">
+          <article
+            class="gallery-card"
+            data-image-id="<%= image._id %>"
+          >
             <div class="gallery-card__image-container">
               <img
                 src="<%= image.path %>"
@@ -77,8 +98,16 @@
             </div>
 
             <div class="gallery-card__actions">
-              <button class="btn btn--edit" data-action="edit">Edit</button>
-              <button class="btn btn--danger" data-action="delete">
+              <button
+                class="btn btn--edit"
+                data-action="edit"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn--danger"
+                data-action="delete"
+              >
                 Delete
               </button>
             </div>
@@ -90,13 +119,23 @@
       </div>
     </section>
     <script src="/dashboard.js"></script>
-    <div id="editModal" class="modal">
+    <div
+      id="editModal"
+      class="modal"
+    >
       <div class="modal__content">
         <h3 class="modal__title">Edit Image</h3>
-        <form id="editImageForm" class="modal__form">
+        <form
+          id="editImageForm"
+          class="modal__form"
+        >
           <div class="modal__field">
             <label for="editCategory">Category</label>
-            <select id="editCategory" name="category" required>
+            <select
+              id="editCategory"
+              name="category"
+              required
+            >
               <option value="pipes">Pipes</option>
               <option value="structural">Structural</option>
             </select>
@@ -117,7 +156,12 @@
             >
               Cancel
             </button>
-            <button type="submit" class="btn">Save Changes</button>
+            <button
+              type="submit"
+              class="btn"
+            >
+              Save Changes
+            </button>
           </div>
         </form>
       </div>

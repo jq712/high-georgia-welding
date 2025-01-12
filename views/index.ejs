@@ -19,10 +19,6 @@
             <div class="hero__spark"></div>
             <div class="hero__spark"></div>
           </div>
-          <h1 class="hero__headline">
-            We handle all types of welding & pipe fitting across North Georgia
-            and surrounding areas.
-          </h1>
           <div class="hero__cta-container">
             <p class="hero__description">
               Over 15 years of experience bringing the weld to you.
@@ -58,7 +54,7 @@
       </section>
 
       <section class="cards-section">
-        <h2 class="cards-title">Our Services</h2>
+        <h2 class="cards-title title">Our Services</h2>
         <div class="cards">
           <div class="card">
             <div class="card__image-container">
@@ -69,7 +65,7 @@
               />
             </div>
             <div class="card__content">
-              <h3 class="card__title">Repairs</h3>
+              <h3 class="card__title underlined">Repairs</h3>
               <p class="card__text">
                 High Georgia Welding Services stands as your go-to expert for
                 welding repairs, catering to both industrial giants and personal
@@ -88,7 +84,7 @@
               />
             </div>
             <div class="card__content">
-              <h3 class="card__title">Pipe Fitting</h3>
+              <h3 class="card__title underlined">Pipe Fitting</h3>
               <p class="card__text">
                 High Georgia Welding Services is a trusted name in the industry
                 for pipe fitting services. We have the expertise to handle all
@@ -107,7 +103,7 @@
               />
             </div>
             <div class="card__content">
-              <h3 class="card__title">All Alloys Covered</h3>
+              <h3 class="card__title underlined">All Alloys Covered</h3>
               <p class="card__text">
                 At High Georgia Welding Services, we pride ourselves on our
                 versatility. Our skilled welders are proficient in working with
@@ -120,9 +116,13 @@
           </div>
         </div>
       </section>
-
-      <!--prettier-ignore-->
-      <%- include('partials/contact-form.ejs', { isHomePage: true }) %>
+      <section
+        id="contact"
+        class="flex-center"
+      >
+        <!--prettier-ignore-->
+        <%- include('partials/contact-form.ejs', { isHomePage: true }) %>
+      </section>
     </main>
 
     <!--prettier-ignore-->

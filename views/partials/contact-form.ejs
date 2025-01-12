@@ -1,86 +1,114 @@
-<section
-  id="contact"
-  class="<%= locals.isHomePage ? 'contact-section' : 'content-container' %> glassmorphism"
+<h1 class="contact__header title">Contact Us</h1>
+<p class="contact__intro">
+  Do <strong>YOU</strong> have a <strong>job</strong> we can assist you with?
+  Contact us today. We'd love to hear from you!
+</p>
+<p class="contact__subheader">
+  Leave your information below and we will contact you within 24 hours!
+</p>
+<form
+  data-form="contact"
+  class="contact__form"
 >
-  <h1
-    class="<%= locals.isHomePage ? 'contact__header' : 'content-container__title' %>"
+  <% if (locals.messages) { %> <% if (messages.error) { %>
+  <div class="alert alert--error"><%= messages.error %></div>
+  <% } %> <% if (messages.allErrors) { %>
+  <div class="alert alert--error">
+    <ul>
+      <% messages.allErrors.forEach(error => { %>
+      <li><%= error %></li>
+      <% }) %>
+    </ul>
+  </div>
+  <% } %> <% if (messages.success) { %>
+  <div class="alert alert--success"><%= messages.success %></div>
+  <% } %> <% } %>
+
+  <div class="form__group">
+    <label
+      for="name"
+      class="form__label"
+      >Name:</label
+    >
+    <input
+      type="text"
+      name="name"
+      data-input="name"
+      class="form__input"
+      value="<%= locals.oldInput?.name || '' %>"
+      required
+      minlength="2"
+      maxlength="50"
+    />
+    <span
+      class="error-message"
+      data-error="name"
+    ></span>
+  </div>
+
+  <div class="form__group">
+    <label
+      for="email"
+      class="form__label"
+      >Email:</label
+    >
+    <input
+      type="email"
+      name="email"
+      data-input="email"
+      class="form__input"
+      required
+    />
+    <span
+      class="error-message"
+      data-error="email"
+    ></span>
+  </div>
+
+  <div class="form__group">
+    <label
+      for="phone"
+      class="form__label"
+      >Phone:</label
+    >
+    <input
+      type="tel"
+      name="phone"
+      data-input="phone"
+      class="form__input"
+      required
+    />
+    <span
+      class="error-message"
+      data-error="phone"
+    ></span>
+  </div>
+
+  <div class="form__group">
+    <label
+      for="message"
+      class="form__label"
+      >Message:</label
+    >
+    <textarea
+      name="message"
+      data-input="message"
+      class="form__input form__textarea"
+      required
+      minlength="10"
+      maxlength="1000"
+    ></textarea>
+    <span
+      class="error-message"
+      data-error="message"
+    ></span>
+  </div>
+
+  <button
+    type="submit"
+    class="btn"
+    data-action="submit"
   >
-    Contact Us
-  </h1>
-  <p class="contact__intro">
-    Do <strong>YOU</strong> have a <strong>job</strong> we can assist you with?
-    Contact us today. We'd love to hear from you!
-  </p>
-  <p class="contact__subheader">
-    Leave your information below and we will contact you within 24 hours!
-  </p>
-  <form data-form="contact" class="contact__form">
-    <% if (locals.messages) { %> <% if (messages.error) { %>
-    <div class="alert alert--error"><%= messages.error %></div>
-    <% } %> <% if (messages.allErrors) { %>
-    <div class="alert alert--error">
-      <ul>
-        <% messages.allErrors.forEach(error => { %>
-        <li><%= error %></li>
-        <% }) %>
-      </ul>
-    </div>
-    <% } %> <% if (messages.success) { %>
-    <div class="alert alert--success"><%= messages.success %></div>
-    <% } %> <% } %>
-
-    <div class="form__group">
-      <label for="name" class="form__label">Name:</label>
-      <input
-        type="text"
-        name="name"
-        data-input="name"
-        class="form__input"
-        value="<%= locals.oldInput?.name || '' %>"
-        required
-        minlength="2"
-        maxlength="50"
-      />
-      <span class="error-message" data-error="name"></span>
-    </div>
-
-    <div class="form__group">
-      <label for="email" class="form__label">Email:</label>
-      <input
-        type="email"
-        name="email"
-        data-input="email"
-        class="form__input"
-        required
-      />
-      <span class="error-message" data-error="email"></span>
-    </div>
-
-    <div class="form__group">
-      <label for="phone" class="form__label">Phone:</label>
-      <input
-        type="tel"
-        name="phone"
-        data-input="phone"
-        class="form__input"
-        required
-      />
-      <span class="error-message" data-error="phone"></span>
-    </div>
-
-    <div class="form__group">
-      <label for="message" class="form__label">Message:</label>
-      <textarea
-        name="message"
-        data-input="message"
-        class="form__input form__textarea"
-        required
-        minlength="10"
-        maxlength="1000"
-      ></textarea>
-      <span class="error-message" data-error="message"></span>
-    </div>
-
-    <button type="submit" class="btn" data-action="submit">Submit</button>
-  </form>
-</section>
+    Submit
+  </button>
+</form>

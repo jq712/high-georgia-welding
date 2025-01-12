@@ -9,17 +9,41 @@
   <!--prettier-ignore-->
   <%- include('partials/header.ejs') %>
   <body data-page="gallery">
-    <main class="glassmorphism gallery">
-      <h2 data-gallery-title>Image Gallery</h2>
-      <div data-filter-container class="gallery__filters">
-        <button class="filter-button active" data-filter="all">All</button>
-        <button class="filter-button" data-filter="pipes">Pipes</button>
-        <button class="filter-button" data-filter="structural">
+    <main class="gallery">
+      <h2
+        data-gallery-title
+        class="title"
+      >
+        Image Gallery
+      </h2>
+      <div
+        data-filter-container
+        class="gallery__filters"
+      >
+        <button
+          class="filter-button active"
+          data-filter="all"
+        >
+          All
+        </button>
+        <button
+          class="filter-button"
+          data-filter="pipes"
+        >
+          Pipes
+        </button>
+        <button
+          class="filter-button"
+          data-filter="structural"
+        >
           Structural
         </button>
       </div>
 
-      <div data-gallery-container class="gallery__grid">
+      <div
+        data-gallery-container
+        class="gallery__grid"
+      >
         <% if (images && images.length > 0) { %> <% images.forEach((image,
         index) => { %>
         <div
@@ -43,7 +67,11 @@
       </div>
     </main>
 
-    <div class="gallery__lightbox" data-lightbox aria-hidden="true">
+    <div
+      class="gallery__lightbox"
+      data-lightbox
+      aria-hidden="true"
+    >
       <button
         class="gallery__close"
         data-lightbox-close
@@ -72,9 +100,15 @@
           alt=""
           class="gallery__lightbox-image"
         />
-        <p class="gallery__description" data-lightbox-description></p>
+        <p
+          class="gallery__description"
+          data-lightbox-description
+        ></p>
       </div>
-      <div class="gallery__counter" data-lightbox-counter></div>
+      <div
+        class="gallery__counter"
+        data-lightbox-counter
+      ></div>
     </div>
 
     <!--prettier-ignore-->
