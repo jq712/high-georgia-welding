@@ -7,20 +7,23 @@ const register = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
+    // make email lowercase
+    req.body.email = email.toLowerCase();
+
     const isAllowed = await AllowedEmail.findOne({ email });
     if (!isAllowed) {
       return res.status(403).json({
-        status: 'error',
-        errors: { email: 'Email not allowed' }
+        status: "error",
+        errors: { email: "Email not allowed" },
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    const user = await User.create({ 
-      email, 
+    const user = await User.create({
+      email,
       password: hashedPassword,
       role: isAllowed.role,
-      isAdmin: isAllowed.role === 'admin'
+      isAdmin: isAllowed.role === "admin",
     });
 
     // Set session
@@ -28,24 +31,24 @@ const register = async (req, res, next) => {
       id: user._id,
       email: user.email,
       role: user.role,
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
     };
 
     res.status(201).json({
-      status: 'success',
-      redirect: '/dashboard',
-      message: 'Registration successful'
+      status: "success",
+      redirect: "/dashboard",
+      message: "Registration successful",
     });
   } catch (err) {
     if (err.code === 11000) {
       return res.status(400).json({
-        status: 'error',
-        errors: { email: 'Email already in use' }
+        status: "error",
+        errors: { email: "Email already in use" },
       });
     }
     res.status(500).json({
-      status: 'error',
-      errors: { general: 'Registration failed' }
+      status: "error",
+      errors: { general: "Registration failed" },
     });
   }
 };
@@ -57,10 +60,10 @@ const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
     if (!user || !(await user.correctPassword(password, user.password))) {
       return res.status(401).json({
-        status: 'error',
-        errors: { 
-          general: 'Invalid email or password'
-        }
+        status: "error",
+        errors: {
+          general: "Invalid email or password",
+        },
       });
     }
 
@@ -69,21 +72,21 @@ const login = async (req, res, next) => {
       id: user._id,
       email: user.email,
       role: user.role,
-      isAdmin: user.isAdmin
+      isAdmin: user.isAdmin,
     };
 
     res.status(200).json({
-      status: 'success',
-      redirect: '/dashboard',
-      message: 'Login successful'
+      status: "success",
+      redirect: "/dashboard",
+      message: "Login successful",
     });
   } catch (error) {
-    console.error('Login error:', error);
+    console.error("Login error:", error);
     res.status(500).json({
-      status: 'error',
+      status: "error",
       errors: {
-        general: 'An error occurred during login'
-      }
+        general: "An error occurred during login",
+      },
     });
   }
 };

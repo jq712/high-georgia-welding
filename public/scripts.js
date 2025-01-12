@@ -28,7 +28,7 @@ const ROUTES = {
   GALLERY: "/gallery",
   LOGIN: "/login",
   REGISTER: "/register",
-  DASHBOARD: "/dashboard"
+  DASHBOARD: "/dashboard",
 };
 
 class App {
@@ -116,29 +116,31 @@ class FormManager {
         name: document.querySelector('[data-error="name"]'),
         email: document.querySelector('[data-error="email"]'),
         phone: document.querySelector('[data-error="phone"]'),
-        message: document.querySelector('[data-error="message"]')
-      }
+        message: document.querySelector('[data-error="message"]'),
+      },
     };
-    
+
     this.initContactForm();
   }
 
   initContactForm() {
     if (this.DOM.contactForm) {
-      this.DOM.contactForm.addEventListener('submit', (e) => this.handleSubmit(e));
+      this.DOM.contactForm.addEventListener("submit", (e) =>
+        this.handleSubmit(e)
+      );
       this.addInputValidationListeners();
     }
   }
 
   addInputValidationListeners() {
-    ['name', 'email', 'phone', 'message'].forEach(field => {
+    ["name", "email", "phone", "message"].forEach((field) => {
       const input = this.DOM[`${field}Input`];
       if (input) {
-        input.addEventListener('input', () => {
+        input.addEventListener("input", () => {
           this.validateField(field, input.value);
-          this.DOM.errorSpans[field].textContent = '';
+          this.DOM.errorSpans[field].textContent = "";
         });
-        input.addEventListener('blur', () => {
+        input.addEventListener("blur", () => {
           this.validateField(field, input.value);
         });
       }
@@ -147,30 +149,37 @@ class FormManager {
 
   validateField(field, value) {
     const errors = {};
-    
-    switch(field) {
-      case 'name':
-        if (!value.trim()) errors.name = 'Name is required';
-        else if (value.length < 2) errors.name = 'Name must be at least 2 characters';
-        else if (value.length > 50) errors.name = 'Name cannot exceed 50 characters';
+
+    switch (field) {
+      case "name":
+        if (!value.trim()) errors.name = "Name is required";
+        else if (value.length < 2)
+          errors.name = "Name must be at least 2 characters";
+        else if (value.length > 50)
+          errors.name = "Name cannot exceed 50 characters";
         break;
-      
-      case 'email':
+
+      case "email":
         const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
-        if (!value.trim()) errors.email = 'Email is required';
-        else if (!emailRegex.test(value)) errors.email = 'Please enter a valid email address';
+        if (!value.trim()) errors.email = "Email is required";
+        else if (!emailRegex.test(value))
+          errors.email = "Please enter a valid email address";
         break;
-      
-      case 'phone':
-        const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-        if (!value.trim()) errors.phone = 'Phone number is required';
-        else if (!phoneRegex.test(value)) errors.phone = 'Please enter a valid phone number';
+
+      case "phone":
+        const phoneRegex =
+          /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+        if (!value.trim()) errors.phone = "Phone number is required";
+        else if (!phoneRegex.test(value))
+          errors.phone = "Please enter a valid phone number";
         break;
-      
-      case 'message':
-        if (!value.trim()) errors.message = 'Message is required';
-        else if (value.length < 10) errors.message = 'Message must be at least 10 characters';
-        else if (value.length > 1000) errors.message = 'Message cannot exceed 1000 characters';
+
+      case "message":
+        if (!value.trim()) errors.message = "Message is required";
+        else if (value.length < 10)
+          errors.message = "Message must be at least 10 characters";
+        else if (value.length > 1000)
+          errors.message = "Message cannot exceed 1000 characters";
         break;
     }
 
@@ -182,75 +191,81 @@ class FormManager {
   }
 
   validateForm() {
-    const fields = ['name', 'email', 'phone', 'message'];
+    const fields = ["name", "email", "phone", "message"];
     let isValid = true;
-    
-    fields.forEach(field => {
+
+    fields.forEach((field) => {
       const input = this.DOM[`${field}Input`];
       if (input && !this.validateField(field, input.value)) {
         isValid = false;
       }
     });
-    
+
     return isValid;
   }
 
   async handleSubmit(e) {
     e.preventDefault();
     this.clearErrors();
-    
+
     try {
       const formData = {
         name: this.DOM.nameInput.value,
         email: this.DOM.emailInput.value,
         phone: this.DOM.phoneInput.value,
-        message: this.DOM.messageInput.value
+        message: this.DOM.messageInput.value,
       };
 
       const response = await fetch(API_ENDPOINTS.FORMS.CONTACT, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const result = await response.json();
 
-      if (result.status === 'success') {
+      if (result.status === "success") {
         this.showSuccess(result.message);
         this.DOM.contactForm.reset();
       } else {
         // Handle validation errors from Joi
-        const errors = result.message.split(', ').reduce((acc, error) => {
-          const field = error.toLowerCase().split(' ')[0];
+        const errors = result.message.split(", ").reduce((acc, error) => {
+          const field = error.toLowerCase().split(" ")[0];
           acc[field] = error;
           return acc;
         }, {});
         this.showErrors(errors);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
-      this.showErrors({ general: 'Error sending message. Please try again.' });
+      console.error("Form submission error:", error);
+      this.showErrors({ general: "Error sending message. Please try again." });
     }
   }
 
   showSuccess(message) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'alert alert--success';
+    const alertDiv = document.createElement("div");
+    alertDiv.className = "alert alert--success";
     alertDiv.textContent = message;
-    this.DOM.contactForm.insertBefore(alertDiv, this.DOM.contactForm.firstChild);
+    this.DOM.contactForm.insertBefore(
+      alertDiv,
+      this.DOM.contactForm.firstChild
+    );
     setTimeout(() => alertDiv.remove(), 5000);
   }
 
   showErrors(errors) {
     this.clearErrors();
     Object.entries(errors).forEach(([field, message]) => {
-      if (field === 'general') {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert--error';
+      if (field === "general") {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = "alert alert--error";
         alertDiv.textContent = message;
-        this.DOM.contactForm.insertBefore(alertDiv, this.DOM.contactForm.firstChild);
+        this.DOM.contactForm.insertBefore(
+          alertDiv,
+          this.DOM.contactForm.firstChild
+        );
       } else if (this.DOM.errorSpans[field]) {
         this.DOM.errorSpans[field].textContent = message;
       }
@@ -258,10 +273,12 @@ class FormManager {
   }
 
   clearErrors() {
-    Object.values(this.DOM.errorSpans).forEach(span => {
-      if (span) span.textContent = '';
+    Object.values(this.DOM.errorSpans).forEach((span) => {
+      if (span) span.textContent = "";
     });
-    this.DOM.contactForm.querySelectorAll('.alert').forEach(alert => alert.remove());
+    this.DOM.contactForm
+      .querySelectorAll(".alert")
+      .forEach((alert) => alert.remove());
   }
 }
 
@@ -274,14 +291,16 @@ class AuthManager {
       loginPassword: document.querySelector("[data-login-password]"),
       registerEmail: document.querySelector("[data-register-email]"),
       registerPassword: document.querySelector("[data-register-password]"),
-      registerConfirmPassword: document.querySelector("[data-register-confirm-password]"),
+      registerConfirmPassword: document.querySelector(
+        "[data-register-confirm-password]"
+      ),
       passwordToggle: document.querySelector("[data-password-toggle]"),
       errorMessages: document.querySelectorAll("[data-error]"),
     };
-    
+
     // Initialize password toggle for login form
     if (this.DOM.passwordToggle && this.DOM.loginPassword) {
-      this.DOM.passwordToggle.addEventListener("click", () => 
+      this.DOM.passwordToggle.addEventListener("click", () =>
         this.toggleLoginPasswordVisibility()
       );
     }
@@ -299,37 +318,39 @@ class AuthManager {
   async handleLogin(e) {
     const formData = new FormData(e.target);
     const data = {
-      email: formData.get('email'),
-      password: formData.get('password')
+      email: formData.get("email"),
+      password: formData.get("password"),
     };
 
     try {
       const response = await fetch(API_ENDPOINTS.FORMS.LOGIN, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
-      if (result.status === 'success') {
-        showCustomAlert('Login successful!');
+      if (result.status === "success") {
+        showCustomAlert("Login successful!");
         window.location.href = result.redirect || ROUTES.DASHBOARD;
       } else {
         this.showErrors(result.errors);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      this.showErrors({ general: 'An error occurred during login' });
+      console.error("Login error:", error);
+      this.showErrors({ general: "An error occurred during login" });
     }
   }
 
   toggleLoginPasswordVisibility() {
-    const passwordType = this.DOM.loginPassword.type === "password" ? "text" : "password";
+    const passwordType =
+      this.DOM.loginPassword.type === "password" ? "text" : "password";
     this.DOM.loginPassword.type = passwordType;
-    this.DOM.passwordToggle.textContent = passwordType === "password" ? "👀" : "🙈";
+    this.DOM.passwordToggle.textContent =
+      passwordType === "password" ? "👀" : "🙈";
   }
 
   initRegister() {
@@ -341,7 +362,7 @@ class AuthManager {
     });
 
     if (this.DOM.passwordToggle) {
-      this.DOM.passwordToggle.addEventListener("click", () => 
+      this.DOM.passwordToggle.addEventListener("click", () =>
         this.togglePasswordVisibility()
       );
     }
@@ -350,38 +371,38 @@ class AuthManager {
   async handleRegister(e) {
     const formData = new FormData(e.target);
     const data = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-      confirmPassword: formData.get('confirm-password')
+      email: formData.get("email").trim().toLowerCase(),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirm-password"),
     };
 
     try {
       const response = await fetch(API_ENDPOINTS.FORMS.REGISTER, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
 
-      if (result.status === 'success') {
-        showCustomAlert('Registration successful!');
+      if (result.status === "success") {
+        showCustomAlert("Registration successful!");
         window.location.href = result.redirect || ROUTES.DASHBOARD;
       } else {
         this.showErrors(result.errors);
       }
     } catch (error) {
-      console.error('Registration error:', error);
-      showCustomAlert('An error occurred during registration');
+      console.error("Registration error:", error);
+      showCustomAlert("An error occurred during registration");
     }
   }
 
   showErrors(errors) {
     // Clear existing errors
-    this.DOM.errorMessages.forEach(el => {
-      el.textContent = '';
+    this.DOM.errorMessages.forEach((el) => {
+      el.textContent = "";
     });
 
     // Display new errors
@@ -396,10 +417,12 @@ class AuthManager {
   }
 
   togglePasswordVisibility() {
-    const passwordType = this.DOM.registerPassword.type === "password" ? "text" : "password";
+    const passwordType =
+      this.DOM.registerPassword.type === "password" ? "text" : "password";
     this.DOM.registerPassword.type = passwordType;
     this.DOM.registerConfirmPassword.type = passwordType;
-    this.DOM.passwordToggle.textContent = passwordType === "password" ? "👀" : "🙈";
+    this.DOM.passwordToggle.textContent =
+      passwordType === "password" ? "👀" : "🙈";
   }
 }
 
