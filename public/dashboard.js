@@ -1,4 +1,3 @@
-import logger from "../utils/logger.js";
 // Constants
 const API_ENDPOINTS = {
   AUTH_LOGOUT: "/api/auth/logout",
@@ -401,6 +400,7 @@ class AllowedEmailsManager {
       const response = await fetch(API_ENDPOINTS.ALLOWED_EMAILS, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Add this
         body: JSON.stringify({ email, role }),
       });
 
@@ -433,6 +433,7 @@ class AllowedEmailsManager {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include", // Add this
           body: JSON.stringify({ email: newEmail, role: newRole }),
         }
       );
@@ -451,6 +452,7 @@ class AllowedEmailsManager {
         `${API_ENDPOINTS.ALLOWED_EMAILS}/${emailId}`,
         {
           method: "DELETE",
+          credentials: "include", // Add this
         }
       );
 
