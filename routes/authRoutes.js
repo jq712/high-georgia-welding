@@ -6,12 +6,7 @@ import { validate, schemas } from "../middleware/validationMiddleware.js";
 
 // Public routes
 router.post("/register", validate(schemas.register), authController.register);
-router.post(
-  "/login",
-  validate(schemas.login),
-
-  authController.login
-);
+router.post("/login", validate(schemas.login), authController.login);
 router.post("/logout", authController.logout);
 router.get("/current-user", authController.getCurrentUser);
 

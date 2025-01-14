@@ -1,86 +1,55 @@
 import logger from "../utils/logger.js";
+
 // Custom error class for operational errors
 class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
-    this.status = this.getErrorStatus(statusCode);
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
     this.isOperational = true;
-  }
 
-  getErrorStatus(code) {
-    return `${code}`.startsWith("4") ? "fail" : "error";
+    // Capture the stack trace for better debugging
+    Error.captureStackTrace(this, this.constructor);
   }
 }
 
-// Determine if request expects JSON response
+// Utility to determine if the request expects a JSON response
 const isApiRequest = (req) => {
-  logger.info("Headers:", req.headers); // Example of logging info
-  return req.xhr || req.headers.accept.includes("json");
+  return (
+    req.path.startsWith("/api/") ||
+    req.headers["content-type"] === "application/json"
+  );
 };
 
-// Handle web redirects based on error type
-const handleWebRedirect = (err, req, res) => {
-  logger.warn(`Redirecting user due to error: ${err.message}`); // Log warning
-  req.session.messages = { error: err.message };
-
-  if (err.statusCode === 401) {
-    return res.redirect("/login");
-  }
-  if (err.statusCode === 404) {
-    return res.redirect("/404");
-  }
-
-  return res.redirect("back");
-};
-
-// Main error handling middleware
+// Centralized error-handling middleware
 const errorHandler = (err, req, res, next) => {
-  // Set default error status and code
+  // Set default status code and status
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
   // Log the error
   if (err.isOperational) {
-    logger.error(
-      `Operational error: ${err.message} (status: ${err.statusCode})`
-    );
+    // Log operational errors (user errors, validation errors, etc.)
+    logger.warn(`Operational error: ${err.message}`);
   } else {
-    logger.error(`Unexpected error: ${err.stack || err.message}`);
+    // Log unexpected or programming errors
+    logger.error(`Unexpected error: ${err.message}`, { stack: err.stack });
   }
 
-  // Handle common MongoDB errors
-  if (err.code === 11000) {
-    err.statusCode = 400;
-    err.message = "Duplicate field value entered";
-    logger.warn(`Duplicate key error: ${err.message}`);
-  }
-
-  // Handle validation errors
-  if (err.name === "ValidationError") {
-    err.statusCode = 400;
-    err.message = Object.values(err.errors)
-      .map((val) => val.message)
-      .join(". ");
-    logger.warn(`Validation error: ${err.message}`);
-  }
-
-  // Send appropriate response based on request type
-  if (isApiRequest(req)) {
-    return res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-  }
-
-  return handleWebRedirect(err, req, res);
+  // Respond with JSON
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.isOperational
+      ? err.message // For operational errors, send a specific message
+      : "Something went wrong! Please try again later.", // For unknown errors, send a generic message
+  });
 };
 
-// Wrapper for async route handlers
+// Wrapper to handle asynchronous route handlers and pass errors to the middleware
 const catchAsync = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-export { AppError, errorHandler, catchAsync };
+export { AppError, isApiRequest, errorHandler, catchAsync };

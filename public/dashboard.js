@@ -1,3 +1,4 @@
+import logger from "../utils/logger.js";
 // Constants
 const API_ENDPOINTS = {
   AUTH_LOGOUT: "/api/auth/logout",
@@ -350,165 +351,114 @@ class GalleryManager {
   }
 }
 
+// In dashboard.js
 class AllowedEmailsManager {
-  constructor(DOM) {
-    this.emailsTable = document.getElementById("allowedEmailsTable");
-    this.addEmailForm = document.getElementById("addEmailForm");
-    this.bindEvents();
+  constructor() {
+    this.DOM = {
+      table: document.getElementById("allowedEmailsTable"),
+      addEmailForm: document.getElementById("addEmailForm"),
+    };
   }
 
   init() {
-    // Initialize any necessary data or state
-    console.log("AllowedEmailsManager initialized");
-  }
+    if (this.DOM.addEmailForm) {
+      this.DOM.addEmailForm.addEventListener("submit", (e) =>
+        this.handleAddEmail(e)
+      );
+    }
 
-  bindEvents() {
-    if (this.emailsTable) {
-      this.emailsTable.addEventListener("click", (e) => {
-        const editBtn = e.target.closest(".btn--edit");
-        const deleteBtn = e.target.closest(".btn--delete");
+    // Use event delegation for the table
+    if (this.DOM.table) {
+      this.DOM.table.addEventListener("click", (e) => {
+        const target = e.target;
 
-        if (editBtn) {
-          const id = editBtn.dataset.id;
-          this.handleEdit(id);
-        } else if (deleteBtn) {
-          const id = deleteBtn.dataset.id;
-          this.handleDelete(id);
+        if (target.classList.contains("btn--edit")) {
+          e.preventDefault();
+          const emailId = target.getAttribute("data-id");
+          if (emailId) this.handleEdit(emailId);
+        }
+
+        if (target.classList.contains("btn--danger")) {
+          e.preventDefault();
+          const emailId = target.getAttribute("data-id");
+          if (
+            emailId &&
+            confirm("Are you sure you want to delete this email?")
+          ) {
+            this.handleDelete(emailId);
+          }
         }
       });
     }
-
-    if (this.addEmailForm) {
-      this.addEmailForm.addEventListener("submit", (e) => this.handleAdd(e));
-    }
   }
 
-  async handleEdit(id) {
-    try {
-      const emailRow = document
-        .querySelector(`button[data-id="${id}"]`)
-        .closest("tr");
-      const currentEmail = emailRow.querySelector(
-        '[data-label="Email"]'
-      ).textContent;
-      const currentRole = emailRow.querySelector(
-        '[data-label="Role"]'
-      ).textContent;
-
-      const dialog = document.createElement("dialog");
-      dialog.className = "modal";
-      dialog.innerHTML = `
-        <form>
-          <h3>Edit Allowed Email</h3>
-          <input type="email" name="email" value="${currentEmail}" required>
-          <select name="role" required>
-            <option value="user" ${
-              currentRole === "user" ? "selected" : ""
-            }>User</option>
-            <option value="admin" ${
-              currentRole === "admin" ? "selected" : ""
-            }>Admin</option>
-          </select>
-          <div class="modal__actions">
-            <button type="submit" class="btn">Save</button>
-            <button type="button" class="btn btn--secondary" id="cancelBtn">Cancel</button>
-          </div>
-        </form>
-      `;
-
-      document.body.appendChild(dialog);
-      dialog.showModal();
-
-      const form = dialog.querySelector("form");
-      const cancelBtn = dialog.querySelector("#cancelBtn");
-
-      cancelBtn.addEventListener("click", () => {
-        dialog.close();
-        dialog.remove();
-      });
-
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        await this.saveEmailChanges(id, {
-          email: formData.get("email"),
-          role: formData.get("role"),
-        });
-        dialog.close();
-        dialog.remove();
-      });
-    } catch (error) {
-      console.error("Error editing email:", error);
-      showCustomAlert("Error editing email");
-    }
-  }
-
-  async handleDelete(id) {
-    if (!confirm("Are you sure you want to delete this email?")) return;
-
-    try {
-      const response = await fetch(`${API_ENDPOINTS.ALLOWED_EMAILS}/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!response.ok) throw new Error("Failed to delete email");
-      window.location.reload();
-    } catch (error) {
-      console.error("Error deleting email:", error);
-      showCustomAlert("Error deleting email");
-    }
-  }
-
-  async handleAdd(e) {
+  async handleAddEmail(e) {
     e.preventDefault();
-
     const email = document.getElementById("newEmail").value;
     const role = document.getElementById("newRole").value;
 
     try {
       const response = await fetch(API_ENDPOINTS.ALLOWED_EMAILS, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        credentials: "include",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, role }),
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to add email");
-      }
-
+      if (!response.ok) throw new Error("Failed to add email");
       window.location.reload();
     } catch (error) {
       console.error("Error adding email:", error);
-      showCustomAlert("Error adding email: " + error.message);
+      showCustomAlert("Failed to add email. Please try again.");
     }
   }
 
-  async saveEmailChanges(id, data) {
+  async handleEdit(emailId) {
     try {
-      const response = await fetch(`${API_ENDPOINTS.ALLOWED_EMAILS}/${id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+      const row = this.DOM.table
+        .querySelector(`button[data-id="${emailId}"]`)
+        .closest("tr");
+      const emailCell = row.querySelector('[data-label="Email"]');
+      const roleCell = row.querySelector('[data-label="Role"]');
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to update email");
-      }
+      const newEmail = prompt("Enter new email:", emailCell.textContent);
+      const newRole = prompt(
+        "Enter new role (user/admin):",
+        roleCell.textContent
+      );
+
+      if (!newEmail || !newRole) return;
+
+      const response = await fetch(
+        `${API_ENDPOINTS.ALLOWED_EMAILS}/${emailId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: newEmail, role: newRole }),
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to update email");
       window.location.reload();
     } catch (error) {
       console.error("Error updating email:", error);
-      showCustomAlert("Error updating email");
+      showCustomAlert("Failed to update email. Please try again.");
+    }
+  }
+
+  async handleDelete(emailId) {
+    try {
+      const response = await fetch(
+        `${API_ENDPOINTS.ALLOWED_EMAILS}/${emailId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) throw new Error("Failed to delete email");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error deleting email:", error);
+      showCustomAlert("Failed to delete email. Please try again.");
     }
   }
 }

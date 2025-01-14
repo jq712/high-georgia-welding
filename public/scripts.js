@@ -3,10 +3,11 @@ const API_ENDPOINTS = {
   FORMS: {
     CONTACT: "/api/forms/submit",
     LOGIN: "/api/auth/login",
-    REGISTER: "/api/auth/register",
   },
   AUTH: {
     LOGOUT: "/api/auth/logout",
+    LOGIN: "/api/auth/login",
+    REGISTER: "/api/auth/register",
   },
   MESSAGES: {
     GET: "/api/forms",
@@ -15,7 +16,7 @@ const API_ENDPOINTS = {
   },
   REDIRECTS: {
     AFTER_LOGIN: "/dashboard",
-    AFTER_REGISTER: "/login",
+    AFTER_REGISTER: "/dashboard",
     AFTER_LOGOUT: "/login",
   },
 };
@@ -34,13 +35,13 @@ const ROUTES = {
 class App {
   constructor() {
     this.currentPage = document.body.dataset.page;
+    this.authManager = new AuthManager(); // Initialize AuthManager once
     this.initializeModules();
   }
 
   initializeModules() {
     this.navigation = new Navigation();
     this.formManager = new FormManager();
-    this.authManager = new AuthManager();
     this.galleryManager = new GalleryManager();
 
     switch (this.currentPage) {
@@ -50,11 +51,7 @@ class App {
       case "gallery":
         this.galleryManager.init();
         break;
-      case "login":
-        this.authManager.initLogin();
-        break;
-      case "register":
-        this.authManager.initRegister();
+      default:
         break;
     }
   }
@@ -304,61 +301,113 @@ class AuthManager {
         this.toggleLoginPasswordVisibility()
       );
     }
+
+    // Initialize event listeners
+    this.initEventListeners();
+  }
+
+  initEventListeners() {
+    if (this.DOM.loginForm) {
+      this.DOM.loginForm.addEventListener("submit", (e) => this.handleLogin(e));
+    }
+
+    if (this.DOM.registerForm) {
+      this.DOM.registerForm.addEventListener("submit", (e) =>
+        this.handleRegister(e)
+      );
+    }
+  }
+
+  clearErrors(form) {
+    const errorMessages = form.querySelectorAll(".error-message");
+    errorMessages.forEach((span) => {
+      span.textContent = "";
+    });
+  }
+
+  async handleLogin(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this.DOM.loginForm);
+    const data = {
+      email: formData.get("email"),
+      password: formData.get("password"),
+    };
+
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
+        window.location.href = API_ENDPOINTS.REDIRECTS.AFTER_LOGIN;
+      } else {
+        this.showErrors(this.DOM.loginForm, result.message);
+      }
+    } catch (error) {
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
+
+  async handleRegister(e) {
+    e.preventDefault(); // Prevent default form submission
+
+    // Collect form data
+    const formData = new FormData(this.DOM.registerForm);
+    const data = {
+      email: formData.get("email").trim().toLowerCase(),
+      password: formData.get("password"),
+      confirmPassword: formData.get("confirm-password"),
+    };
+
+    try {
+      // Send registration data to the server
+      const response = await fetch(API_ENDPOINTS.AUTH.REGISTER, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.status === "success") {
+        // Redirect the user on success
+        window.location.href = API_ENDPOINTS.REDIRECTS.AFTER_REGISTER;
+      } else {
+        // Display the error message returned by the server
+        alert(result.message || "Registration failed. Please try again.");
+      }
+    } catch (error) {
+      // Handle unexpected errors
+      alert("An unexpected error occurred. Please try again.");
+    }
+  }
+
+  showErrors(form, message) {
+    const generalError = form.querySelector('[data-error="general"]');
+    if (generalError) {
+      generalError.textContent = message;
+    }
   }
 
   initLogin() {
     if (!this.DOM.loginForm) return;
+    console.log("Login form initialized");
 
     this.DOM.loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       await this.handleLogin(e);
     });
-  }
-
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-      throw new AppError('Email and password are required', 400);
-    }
-
-    // Find the user by email
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new AppError('Invalid email or password', 401);
-    }
-
-    // Compare provided password with hashed password
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-      throw new AppError('Invalid email or password', 401);
-    }
-
-    // Store user data in the session
-    req.session.user = {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-      isAdmin: user.isAdmin,
-    };
-
-    // Redirect to dashboard on success
-    res.redirect('/dashboard');
-  } catch (error) {
-    // Redirect back to login page with error message
-    req.session.messages = { error: error.message };
-    res.redirect('/login');
-  }
-};
-
-  toggleLoginPasswordVisibility() {
-    const passwordType =
-      this.DOM.loginPassword.type === "password" ? "text" : "password";
-    this.DOM.loginPassword.type = passwordType;
-    this.DOM.passwordToggle.textContent =
-      passwordType === "password" ? "👀" : "🙈";
   }
 
   initRegister() {
@@ -373,55 +422,6 @@ export const login = async (req, res, next) => {
       this.DOM.passwordToggle.addEventListener("click", () =>
         this.togglePasswordVisibility()
       );
-    }
-  }
-
-  async handleRegister(e) {
-    const formData = new FormData(e.target);
-    const data = {
-      email: formData.get("email").trim().toLowerCase(),
-      password: formData.get("password"),
-      confirmPassword: formData.get("confirm-password"),
-    };
-
-    try {
-      const response = await fetch(API_ENDPOINTS.FORMS.REGISTER, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
-
-      const result = await response.json();
-
-      if (result.status === "success") {
-        showCustomAlert("Registration successful!");
-        window.location.href = result.redirect || ROUTES.DASHBOARD;
-      } else {
-        this.showErrors(result.errors);
-      }
-    } catch (error) {
-      console.error("Registration error:", error);
-      showCustomAlert("An error occurred during registration");
-    }
-  }
-
-  showErrors(errors) {
-    // Clear existing errors
-    this.DOM.errorMessages.forEach((el) => {
-      el.textContent = "";
-    });
-
-    // Display new errors
-    if (errors) {
-      Object.entries(errors).forEach(([field, message]) => {
-        const errorElement = document.querySelector(`[data-error="${field}"]`);
-        if (errorElement) {
-          errorElement.textContent = message;
-        }
-      });
     }
   }
 

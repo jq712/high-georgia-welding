@@ -1,51 +1,113 @@
 import { User } from "../models/User.js";
-import { AllowedEmail } from "../models/AllowedEmail.js";
 import bcrypt from "bcryptjs";
-import { AppError, catchAsync } from "../middleware/errorHandlingMiddleware.js";
+import {
+  AppError,
+  catchAsync,
+  isApiRequest,
+} from "../middleware/errorHandlingMiddleware.js";
+import logger from "../utils/logger.js";
+import { AllowedEmail } from "../models/AllowedEmail.js";
 
-const register = catchAsync(async (req, res, next) => {
-  const { email, password, confirmPassword } = req.body;
+const register = async (req, res, next) => {
+  try {
+    const formattedEmail = req.body.email.trim().toLowerCase();
+    const { password, confirmPassword } = req.body;
 
-  if (!email || !password || !confirmPassword) {
-    throw new AppError("All fields are required", 400);
+    if (!formattedEmail || !password || !confirmPassword) {
+      throw new AppError("All fields are required", 400);
+    }
+
+    if (password !== confirmPassword) {
+      throw new AppError("Passwords do not match", 400);
+    }
+
+    const allowedEmail = await AllowedEmail.findOne({ email: formattedEmail });
+    if (!allowedEmail) {
+      throw new AppError("Email is not allowed to register", 400);
+    }
+
+    // Create the new user with the same role as the first allowed email
+    const newUser = await User.create({
+      email: formattedEmail,
+      password,
+      role: allowedEmail.role,
+    });
+
+    // Create a session for the user
+    req.session.user = {
+      id: newUser._id,
+      email: newUser.email,
+      role: newUser.role,
+    };
+
+    // Respond with success
+    res.status(201).json({
+      status: "success",
+      message: "Registered successfully",
+      redirect: "/dashboard",
+    });
+  } catch (error) {
+    // Handle duplicate key errors
+    if (error.code === 11000) {
+      const duplicatedField = Object.keys(error.keyValue)[0];
+      const duplicatedValue = error.keyValue[duplicatedField];
+      const message = `${duplicatedField} "${duplicatedValue}" already exists.`;
+      return next(new AppError(message, 400));
+    }
+
+    return next(error);
   }
+};
 
-  if (password !== confirmPassword) {
-    throw new AppError("Passwords do not match", 400);
+const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate required fields
+    if (!email || !password) {
+      throw new AppError("Email and password are required", 400);
+    }
+    // Format email and log it
+    const formattedEmail = email.trim().toLowerCase();
+
+    // Retrieve the user and log the result
+    const user = await User.findOne({ email: formattedEmail }).select(
+      "+password"
+    );
+
+    if (!user) {
+      logger.warn(`Login failed: User not found for email: ${formattedEmail}`);
+      throw new AppError("Invalid email or password", 401);
+    }
+
+    // Compare passwords and log the result
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      logger.warn(
+        `Login failed: Incorrect password for email: ${formattedEmail}`
+      );
+      throw new AppError("Invalid email or password", 401);
+    }
+
+    // Create a session for the user and log it
+    req.session.user = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
+
+    // Respond with success
+    res.status(200).json({
+      status: "success",
+      message: "Logged in successfully",
+      redirect: "/dashboard",
+    });
+  } catch (error) {
+    console.error("Error during login:", error);
+    return next(error);
   }
-
-  const hashedPassword = await bcrypt.hash(password, 12);
-  await User.create({ email, password: hashedPassword });
-
-  res.redirect("/dashboard");
-});
-
-const login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    throw new AppError("Email and password are required", 400);
-  }
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new AppError("Invalid email or password", 401);
-  }
-
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
-  if (!isPasswordCorrect) {
-    throw new AppError("Invalid email or password", 401);
-  }
-
-  req.session.user = {
-    id: user._id,
-    email: user.email,
-    role: user.role,
-    isAdmin: user.isAdmin,
-  };
-
-  res.redirect("/dashboard");
-});
+};
 
 const logout = catchAsync(async (req, res, next) => {
   await new Promise((resolve, reject) => {
